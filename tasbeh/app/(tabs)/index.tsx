@@ -10,6 +10,7 @@ export default function HomeScreen() {
   const [time, setTime] = useState(new Date());
   const [prayersTimes, setPrayersTimes] = useState([] as any);
   const [nextPrayer, setNextPrayer] = useState(null as any);
+  const [currentPrayer, setCurrentPrayer] = useState(null as any);
 
   useEffect(() => {
 
@@ -61,22 +62,25 @@ export default function HomeScreen() {
           return prayerTime > new Date().getTime();
         })
 
-        if(nextPrayerIndex !== -1){
-          const next = prayers[nextPrayerIndex];
-          const [hours, minutes] = next.time.split(":").map(Number);
-          let timeDifference: any = new Date().setHours(hours, minutes, 0, 0) - new Date().getTime();
-          timeDifference = timeDifference / 1000;
-          let hrs = String(Math.floor(timeDifference / 3600)).padStart(2, "0");
-          let mins = String(Math.floor((timeDifference % 3600) / 60)).padStart(2, "0");
-          let seconds = String(Math.ceil(timeDifference % 60)).padStart(2, "0");
-          setNextPrayer({
-            name: next.name,
-            time: `${hrs}:${mins}:${seconds}`
-          });
-        }
-        else{
-          setNextPrayer(null);
-        }
+        setCurrentPrayer( prayers.find((prayer: any) => {
+          const [hours, minutes] = prayer.time.split(":").map(Number);
+          const prayerTime = new Date().setHours(hours, minutes, 0, 0);
+          return (new Date().getTime() - prayerTime) > 0 && (new Date().getTime() - prayerTime) <5*60*1000;
+        }) );
+
+
+        const next = prayers[nextPrayerIndex? nextPrayerIndex : 0];
+        const [hours, minutes] = next.time.split(":").map(Number);
+        let timeDifference: any = new Date().setHours(hours, minutes, 0, 0) - new Date().getTime();
+        timeDifference = timeDifference / 1000;
+        let hrs = String(Math.floor(timeDifference / 3600)).padStart(2, "0");
+        let mins = String(Math.floor((timeDifference % 3600) / 60)).padStart(2, "0");
+        let seconds = String(Math.ceil(timeDifference % 60)).padStart(2, "0");
+        setNextPrayer({
+          name: next.name,
+          time: `${hrs}:${mins}:${seconds}`
+        });
+          
 
       }, 1000);
     }
@@ -130,7 +134,10 @@ export default function HomeScreen() {
         />
 
         <Text style={styles.next}>
-          {nextPrayer && `متبقى على ${nextPrayer.name} : ${nextPrayer.time}`}
+          {currentPrayer?
+           `حان الأن موعد صلاة ${currentPrayer.name}` : 
+           nextPrayer && `متبقى على ${nextPrayer.name} : ${nextPrayer.time}`
+          }
         </Text>
       </View>
 
