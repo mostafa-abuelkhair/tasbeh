@@ -1,4 +1,4 @@
-# ⚸️ Tasbeh
+#  Tasbeh
 
 A **React Native** mobile application that provides accurate **Muslim prayer times** and **After Pray Azkar**. The app helps users stay connected with their faith by offering prayer reminders, and a beautiful, user-friendly interface.
 
